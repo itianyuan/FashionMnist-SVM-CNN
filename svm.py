@@ -72,7 +72,6 @@ plt.ylabel('Loss')
 plt.title('Training Loss')
 plt.show()
 
-
 # 测试模型
 with torch.no_grad():
     outputs = model(x_test_tensor)
