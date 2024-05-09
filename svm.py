@@ -72,7 +72,7 @@ plt.ylabel('Loss')
 plt.title('Training Loss')
 plt.show()
 
-# 测试模型
+# 测试
 with torch.no_grad():
     outputs = model(x_test_tensor)
     _, predicted = torch.max(outputs, 1)
