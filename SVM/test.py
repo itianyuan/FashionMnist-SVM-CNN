@@ -4,6 +4,7 @@ import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from model import LinearSVM
+from model import SVMWithSigmoidKernel
 
 # 加载fashion-mnist测试集数据集
 test = pd.read_csv('../data/fashion/fashionmnist_test.csv')
@@ -25,6 +26,8 @@ y_test_tensor = torch.tensor(Y_test, dtype=torch.int64)
 input_dim = X_test.shape[1]
 num_classes = len(np.unique(Y_test))
 model = LinearSVM(input_dim, num_classes)
+# model = SVMWithSigmoidKernel(input_dim, num_classes)
+
 
 # 加载模型权重
 model.load_state_dict(torch.load('svm_model.pth'))
