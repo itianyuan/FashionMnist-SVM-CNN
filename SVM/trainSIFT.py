@@ -4,8 +4,8 @@ import numpy as np
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
-# from model import LinearSVM
-from model import SVMWithSigmoidKernel
+from model import LinearSVM
+# from model import SVMWithSigmoidKernel
 import matplotlib.pyplot as plt
 
 import cv2
@@ -60,7 +60,7 @@ y_val_tensor = torch.tensor(y_val, dtype=torch.int64)
 # 创建线性支持向量机模型
 input_dim = max_descriptors * 128  # 更新输入维度
 num_classes = len(np.unique(y_train))
-model = SVMWithSigmoidKernel(input_dim, num_classes)
+model = LinearSVM(input_dim, num_classes)
 
 # 定义损失函数和优化器
 criterion = nn.CrossEntropyLoss()
