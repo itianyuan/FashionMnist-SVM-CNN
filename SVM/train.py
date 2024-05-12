@@ -8,6 +8,8 @@ from model import LinearSVM
 from model import SVMWithSigmoidKernel
 import matplotlib.pyplot as plt
 
+import cv2
+
 # 加载fashion-mnist数据集
 train = pd.read_csv('../data/fashion/fashionmnist_train.csv')
 df_train = train.copy()
