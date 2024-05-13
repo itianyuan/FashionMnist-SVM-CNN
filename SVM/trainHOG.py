@@ -4,10 +4,17 @@ import numpy as np
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
+
 from model import LinearSVM
-# from model import SVMWithSigmoidKernel
+from model import SVMWithSigmoidKernel
+from model import SVMWithGaussianKernel
+from model import PolynomialSVM
+
 import matplotlib.pyplot as plt
 from skimage.feature import hog
+
+from tqdm import tqdm, trange
+
 
 import cv2
 
@@ -50,16 +57,20 @@ y_val_tensor = torch.tensor(y_val, dtype=torch.int64)
 # 创建线性支持向量机模型
 input_dim = x_train_hog.shape[1]  # 更新输入维度为HOG特征的长度
 num_classes = len(np.unique(y_train))
-model = LinearSVM(input_dim, num_classes)
+
+# model = LinearSVM(input_dim, num_classes)
+# model = SVMWithSigmoidKernel(input_dim, num_classes)
+# model = SVMWithGaussianKernel(input_dim, num_classes)
+model = PolynomialSVM(input_dim, num_classes)
 
 # 定义损失函数和优化器
 criterion = nn.CrossEntropyLoss()
 optimizer = torch.optim.SGD(model.parameters(), lr=5)
 
 # 训练模型
-num_epochs = 5000
+num_epochs = 1000
 losses = []
-for epoch in range(num_epochs):
+for epoch in tqdm(range(num_epochs)):
     # 前向传播
     outputs = model(x_train_tensor)  # 不需要再修改输入维度
     loss = criterion(outputs, y_train_tensor)

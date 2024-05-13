@@ -4,8 +4,12 @@ import numpy as np
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
+from model import LinearSVM
 from model import SVMWithSigmoidKernel
+from model import SVMWithGaussianKernel
+from model import PolynomialSVM
 import matplotlib.pyplot as plt
+from tqdm import tqdm, trange
 
 # 加载fashion-mnist数据集
 train = pd.read_csv('../data/fashion/fashionmnist_train.csv')
@@ -34,12 +38,13 @@ losses_dict = {}
 
 for lr in learning_rates:
     print("lr"+str(lr))
-    model = SVMWithSigmoidKernel(input_dim=x_train.shape[1], num_classes=len(np.unique(y_train)))
+    model = PolynomialSVM(input_dim=x_train.shape[1], num_classes=len(np.unique(y_train)))
+    # model = LinearSVM(input_dim=x_train.shape[1], num_classes=len(np.unique(y_train)))
     optimizer = torch.optim.SGD(model.parameters(), lr=lr)
 
     losses = []
-    for epoch in range(200):
-        print("range"+str(epoch))
+    for epoch in tqdm(range(500)):
+        # print("range"+str(epoch))
         # 前向传播
         outputs = model(x_train_tensor)
         loss = nn.CrossEntropyLoss()(outputs, y_train_tensor)

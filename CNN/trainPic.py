@@ -32,17 +32,8 @@ class FashionMNISTDataset(Dataset):
         return (item, label)
 
 # 定义超参数
-LR = 0.01
-EPOCHES = 50
+EPOCHES = 5
 BATCH_SIZE = 256
-
-# 加载训练集和测试集数据
-train_dataset = FashionMNISTDataset(csv_file='../data/fashion/fashionmnist_test.csv')
-test_dataset = FashionMNISTDataset(csv_file='../data/fashion/fashionmnist_train.csv')
-
-# 创建数据加载器
-train_loader = DataLoader(dataset=train_dataset, batch_size=BATCH_SIZE, shuffle=True)
-test_loader = DataLoader(dataset=test_dataset, batch_size=BATCH_SIZE, shuffle=False)
 
 # 定义模型
 class CNN(nn.Module):
@@ -77,16 +68,10 @@ class CNN(nn.Module):
 # 创建模型实例、损失函数和优化器
 model = CNN().to(device)
 criterion = nn.CrossEntropyLoss()
-optimizer = torch.optim.Adam(model.parameters(), lr=LR)
 
 # 定义绘制损失函数的函数
-def plot_loss(losses):
-    plt.figure(figsize=(10, 5))
-    plt.plot(losses, color='blue', linestyle='-')
-    plt.xlabel('Iteration')
-    plt.ylabel('Loss')
-    plt.title('Training Loss')
-    plt.show()
+def plot_loss(losses, lr):
+    plt.plot(losses, label=f"LR={lr}")
 
 # train函数
 def train(model, train_loader, criterion, optimizer, num_epochs=EPOCHES):
@@ -103,18 +88,11 @@ def train(model, train_loader, criterion, optimizer, num_epochs=EPOCHES):
             optimizer.step()
             running_loss += loss.item() * images.size(0)
             losses.append(loss.item())
-            if (i + 1) % 100 == 0:
-                print('Epoch : %d/%d, Iter : %d/%d, Loss : %.4f' % (
-                    epoch + 1, num_epochs,
-                    i + 1, len(train_loader.dataset) // BATCH_SIZE,
-                    loss.item()
-                ))
 
         epoch_loss = running_loss / len(train_loader.dataset)
         print(f"Epoch {epoch+1}/{num_epochs}, Loss: {epoch_loss:.4f}")
 
-    # 绘制损失曲线
-    plot_loss(losses)
+    return losses
 
 # 定义测试函数
 def test(model, test_loader):
@@ -129,11 +107,45 @@ def test(model, test_loader):
             total += labels.size(0)
             correct += (predicted == labels).sum().item()
 
-    print('CNN acc：%.2f %%' % (100 * correct / total))
+    accuracy = 100 * correct / total
+    print('CNN acc：%.2f %%' % accuracy)
+    return accuracy
 
-# 训练模型
-train(model, train_loader, criterion, optimizer)
+# 定义不同学习率的列表
+learning_rates = [0.0001,0.0005,0.001, 0.01, 0.02]
+# 存储每个学习率对应的损失曲线
+all_losses = []
+accuracies = []
 
+# 加载训练集和测试集数据
+train_dataset = FashionMNISTDataset(csv_file='../data/fashion/fashionmnist_test.csv')
+test_dataset = FashionMNISTDataset(csv_file='../data/fashion/fashionmnist_train.csv')
 
-# 在测试集上评估模型性能
-test(model, test_loader)
+# 创建数据加载器
+train_loader = DataLoader(dataset=train_dataset, batch_size=BATCH_SIZE, shuffle=True)
+test_loader = DataLoader(dataset=test_dataset, batch_size=BATCH_SIZE, shuffle=False)
+
+# 循环测试不同学习率
+for lr in learning_rates:
+    print(f"Testing with learning rate: {lr}")
+    # 创建新的模型实例、优化器
+    model = CNN().to(device)
+    optimizer = torch.optim.Adam(model.parameters(), lr=lr)
+    # 训练模型
+    losses = train(model, train_loader, criterion, optimizer)
+    all_losses.append(losses)
+    # 在测试集上评估模型性能
+    accuracy = test(model, test_loader)
+    accuracies.append(accuracy)
+
+# 绘制损失曲线
+plt.figure(figsize=(10, 5))
+for lr, losses in zip(learning_rates, all_losses):
+    plot_loss(losses, lr)
+plt.xlabel('Iteration')
+plt.ylabel('Loss')
+plt.title('Training Loss with Different Learning Rates')
+plt.legend()
+plt.show()
+
+print("Accuracy for each learning rate:", accuracies)

@@ -25,8 +25,8 @@ y_test_tensor = torch.tensor(Y_test, dtype=torch.int64)
 # 创建线性支持向量机模型
 input_dim = X_test.shape[1]
 num_classes = len(np.unique(Y_test))
-model = LinearSVM(input_dim, num_classes)
-# model = SVMWithSigmoidKernel(input_dim, num_classes)
+# model = LinearSVM(input_dim, num_classes)
+model = SVMWithSigmoidKernel(input_dim, num_classes)
 
 
 # 加载模型权重
