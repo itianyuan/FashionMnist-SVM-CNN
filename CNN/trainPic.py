@@ -32,7 +32,7 @@ class FashionMNISTDataset(Dataset):
         return (item, label)
 
 # 定义超参数
-EPOCHES = 5
+EPOCHES = 10
 BATCH_SIZE = 256
 
 # 定义模型
@@ -112,7 +112,7 @@ def test(model, test_loader):
     return accuracy
 
 # 定义不同学习率的列表
-learning_rates = [0.0001,0.0005,0.001, 0.01, 0.02]
+learning_rates = [0.00001, 0.0001 ,0.001, 0.01]
 # 存储每个学习率对应的损失曲线
 all_losses = []
 accuracies = []

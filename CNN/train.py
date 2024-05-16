@@ -11,6 +11,9 @@ import matplotlib.pyplot as plt
 
 from tqdm import tqdm, trange
 
+import time
+
+
 # 检查设备是否支持CUDA
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
@@ -32,8 +35,8 @@ class FashionMNISTDataset(Dataset):
         return (item, label)
 
 # 定义超参数
-LR = 0.01
-EPOCHES = 50
+LR = 0.001
+EPOCHES = 25
 BATCH_SIZE = 256
 
 # 加载训练集和测试集数据
@@ -74,7 +77,24 @@ class CNN(nn.Module):
         out = self.fc(out)
         return out
 
+class SimpleCNN(nn.Module):
+    def __init__(self):
+        super(SimpleCNN, self).__init__()
+        self.layer1 = nn.Sequential(
+            nn.Conv2d(1, 16, kernel_size=5),
+            nn.ReLU(),
+            nn.MaxPool2d(2)
+        )
+        self.fc = nn.Linear(16 * 12 * 12, 10)  # 这里的12 * 12是根据输入大小和池化层结果推断的
+
+    def forward(self, x):
+        x = self.layer1(x)
+        x = x.view(x.size(0), -1)
+        x = self.fc(x)
+        return x
+
 # 创建模型实例、损失函数和优化器
+# model = SimpleCNN().to(device)
 model = CNN().to(device)
 criterion = nn.CrossEntropyLoss()
 optimizer = torch.optim.Adam(model.parameters(), lr=LR)
@@ -131,8 +151,16 @@ def test(model, test_loader):
 
     print('CNN acc：%.2f %%' % (100 * correct / total))
 
+# 记录开始时间
+start_time = time.time()
 # 训练模型
 train(model, train_loader, criterion, optimizer)
+# 记录结束时间
+end_time = time.time()
+
+# 计算程序运行时间
+execution_time = end_time - start_time
+print("程序运行时间：", execution_time, "秒")
 
 
 # 在测试集上评估模型性能
