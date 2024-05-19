@@ -51,13 +51,10 @@ FashionMNIST数据集是一个包含60,000个训练样本和10,000个测试样�
 1. 克隆本代码仓库：
 
 ```
-bash
-Copy code
-git clone https://github.com/yourusername/your-repo.git
+git clone https://github.com/itianyuan/FashionMnist-SVM-CNN.git
 ```
-
-1. 下载FashionMNIST数据集，并将其解压缩后放置于相应的数据文件夹中。
-2. 分别运行两个模型的代码，包括train和test。
+2. 下载FashionMNIST数据集，并将其解压缩后放置于相应的数据文件夹中。
+3. 分别运行两个模型的代码，包括train和test。
 
 ## 环境要求
 
