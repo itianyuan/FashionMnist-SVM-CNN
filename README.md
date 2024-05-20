@@ -9,14 +9,16 @@
 - 邹培源
 - 王心怡
 
-## 文件结构
+## 主要文件结构
 
 ```
 root
 │  convertCSV.py	# 将数据集转换为CSV格式
 │  requirements.txt	# 依赖库版本
+├─DataAndGraph    # 测试结果（数据和图表）
 ├─CNN	# CNN
 │      train.py	# CNN训练及测试
+│      trainPic.py	# 改变学习率，可视化loss的CNN
 ├─data	# 数据集
 │  └─fashion	# 数据集源文件（不含CSV，需手动生成）
 │          t10k-images-idx3-ubyte
@@ -29,7 +31,11 @@ root
     │  svm_model.pth	# 网络参数
     │  test.py	# 测试程序
     │  testPic.py	# 测试程序（含可视化）
-    │  train.py	# 训练程序
+    │  train.py	# 训练程序（使用像素值特征）
+    │  trainHOG.py	# 训练程序（使用HOG特征）
+    │  trainSIFT.py	# 训练程序（使用SIFT特征）
+    │  train-changeLR.py	# 改变学习率训练
+    │  train-changeKernel.py	# 改变核函数训练
 ```
 
 ## 数据集
@@ -45,13 +51,10 @@ FashionMNIST数据集是一个包含60,000个训练样本和10,000个测试样�
 1. 克隆本代码仓库：
 
 ```
-bash
-Copy code
-git clone https://github.com/yourusername/your-repo.git
+git clone https://github.com/itianyuan/FashionMnist-SVM-CNN.git
 ```
-
-1. 下载FashionMNIST数据集，并将其解压缩后放置于相应的数据文件夹中。
-2. 分别运行两个模型的代码，包括train和test。
+2. 下载FashionMNIST数据集，并将其解压缩后放置于相应的数据文件夹中。
+3. 分别运行两个模型的代码，包括train和test。
 
 ## 环境要求
 
