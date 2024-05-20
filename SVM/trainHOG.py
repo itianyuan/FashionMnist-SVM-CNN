@@ -4,6 +4,7 @@ import numpy as np
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
+from sklearn.metrics import confusion_matrix
 
 from model import LinearSVM
 from model import SVMWithSigmoidKernel
@@ -14,7 +15,7 @@ import matplotlib.pyplot as plt
 from skimage.feature import hog
 
 from tqdm import tqdm, trange
-
+import seaborn as sns
 
 import cv2
 
@@ -92,6 +93,9 @@ plt.ylabel('Loss')
 plt.title('Training Loss')
 plt.show()
 
+# 保存模型
+torch.save(model.state_dict(), 'svm_model.pth')
+
 # 测试模型
 with torch.no_grad():
     outputs = model(x_val_tensor)
@@ -99,3 +103,14 @@ with torch.no_grad():
     total = y_val_tensor.size(0)
     correct = (predicted == y_val_tensor).sum().item()
     print(f'Validation Accuracy: {100 * correct / total:.2f}%')
+
+# 生成混淆矩阵
+cm = confusion_matrix(y_val_tensor, predicted)
+
+# 绘制混淆矩阵的热力图
+plt.figure(figsize=(10, 8))
+sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', xticklabels=range(num_classes), yticklabels=range(num_classes))
+plt.xlabel('Predicted Labels')
+plt.ylabel('True Labels')
+plt.title('Confusion Matrix')
+plt.show()

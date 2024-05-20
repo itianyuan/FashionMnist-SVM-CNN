@@ -1,5 +1,5 @@
 import os
-os.environ["KMP_DUPLICATE_LIB_OK"]="TRUE"
+os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
 import numpy as np
 import pandas as pd
 import torch
@@ -8,6 +8,8 @@ import torch.nn.functional as F
 from torch.utils.data import Dataset, DataLoader
 from pathlib import Path
 import matplotlib.pyplot as plt
+import seaborn as sns
+from sklearn.metrics import confusion_matrix
 
 from tqdm import tqdm, trange
 
@@ -94,8 +96,8 @@ class SimpleCNN(nn.Module):
         return x
 
 # 创建模型实例、损失函数和优化器
-# model = SimpleCNN().to(device)
-model = CNN().to(device)
+model = SimpleCNN().to(device)
+# model = CNN().to(device)
 criterion = nn.CrossEntropyLoss()
 optimizer = torch.optim.Adam(model.parameters(), lr=LR)
 
@@ -136,11 +138,13 @@ def train(model, train_loader, criterion, optimizer, num_epochs=EPOCHES):
     # 绘制损失曲线
     plot_loss(losses)
 
-# 定义测试函数
+# 定义测试函数并绘制混淆矩阵
 def test(model, test_loader):
     model.eval()
     correct = 0
     total = 0
+    all_labels = []
+    all_preds = []
     with torch.no_grad():
         for images, labels in test_loader:
             images = images.float().to(device)
@@ -148,8 +152,19 @@ def test(model, test_loader):
             _, predicted = torch.max(outputs.data, 1)
             total += labels.size(0)
             correct += (predicted == labels).sum().item()
+            all_labels.extend(labels)
+            all_preds.extend(predicted)
 
     print('CNN acc：%.2f %%' % (100 * correct / total))
+
+    # 计算混淆矩阵
+    cm = confusion_matrix(all_labels, all_preds)
+    plt.figure(figsize=(10, 8))
+    sns.heatmap(cm, annot=True, fmt='d', cmap='Blues')
+    plt.xlabel('Predicted')
+    plt.ylabel('True')
+    plt.title('Confusion Matrix')
+    plt.show()
 
 # 记录开始时间
 start_time = time.time()
@@ -162,6 +177,5 @@ end_time = time.time()
 execution_time = end_time - start_time
 print("程序运行时间：", execution_time, "秒")
 
-
-# 在测试集上评估模型性能
+# 在测试集上评估模型性能并绘制混淆矩阵
 test(model, test_loader)

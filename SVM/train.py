@@ -79,8 +79,6 @@ plt.show()
 # 保存模型
 torch.save(model.state_dict(), 'svm_model.pth')
 
-
-
 # 加载fashion-mnist测试集数据集
 test = pd.read_csv('../data/fashion/fashionmnist_test.csv')
 df_test = test.copy()
