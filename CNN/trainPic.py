@@ -65,8 +65,24 @@ class CNN(nn.Module):
         out = self.fc(out)
         return out
 
+class SimpleCNN(nn.Module):
+    def __init__(self):
+        super(SimpleCNN, self).__init__()
+        self.layer1 = nn.Sequential(
+            nn.Conv2d(1, 16, kernel_size=5),
+            nn.ReLU(),
+            nn.MaxPool2d(2)
+        )
+        self.fc = nn.Linear(16 * 12 * 12, 10)  # 这里的12 * 12是根据输入大小和池化层结果推断的
+
+    def forward(self, x):
+        x = self.layer1(x)
+        x = x.view(x.size(0), -1)
+        x = self.fc(x)
+        return x
+
 # 创建模型实例、损失函数和优化器
-model = CNN().to(device)
+model = SimpleCNN().to(device)
 criterion = nn.CrossEntropyLoss()
 
 # 定义绘制损失函数的函数
@@ -129,7 +145,7 @@ test_loader = DataLoader(dataset=test_dataset, batch_size=BATCH_SIZE, shuffle=Fa
 for lr in learning_rates:
     print(f"Testing with learning rate: {lr}")
     # 创建新的模型实例、优化器
-    model = CNN().to(device)
+    model = SimpleCNN().to(device)
     optimizer = torch.optim.Adam(model.parameters(), lr=lr)
     # 训练模型
     losses = train(model, train_loader, criterion, optimizer)
